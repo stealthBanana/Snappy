@@ -3,7 +3,7 @@
 //
 #include "../header/decompression.h"
 
-void compress(char inputFile[], char outputFile[])
+void decompress(FILE *fin, FILE *fout)
 {
 
 }

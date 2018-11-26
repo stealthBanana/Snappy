@@ -3,7 +3,8 @@
 //
 #include "../header/compression.h"
 
-void compress(char inputFile[], char outputFile[])
+void compress(FILE *fin, FILE *fout)
 {
 
 }
+
