@@ -5,10 +5,9 @@
 #ifndef SNAPPY_COMPRESSION_H
 #define SNAPPY_COMPRESSION_H
 
-#include <rpcndr.h>
 #include <stdio.h>
 
-void compress(char inputFile[], char outputFile[]);
-char getLength(FILE in);
+void compress(FILE *fin, FILE *fout);
+char getLength(FILE *fin);
 
 #endif //SNAPPY_COMPRESSION_H
