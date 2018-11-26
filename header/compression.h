@@ -6,8 +6,11 @@
 #define SNAPPY_COMPRESSION_H
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <malloc.h>
 
+char getSize(FILE *fin);
 void compress(FILE *fin, FILE *fout);
-char getLength(FILE *fin);
 
 #endif //SNAPPY_COMPRESSION_H

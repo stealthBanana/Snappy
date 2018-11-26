@@ -21,8 +21,12 @@ void main(int argc, char *argv[]) {
             } else {
                 printf("Comando non valevole");
             }
+        }else{
+            //Se non riesco ad aprire il file
         }
-        
+        fclose(fin);
+        fclose(fout);
+
     //1 argument
     }else if(argc == 1){
         //HELP
