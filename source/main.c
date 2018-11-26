@@ -4,15 +4,28 @@
 #include "../header/decompression.h"
 
 void main(int argc, char *argv[]) {
+
+    //2 arguments
     if(argc == 2){
-        if(strcmp(argv[0], "-c") == 0) {
-            compress(argv[1], argv[2]);
-        }else if(strcmp(argv[0], "-d") == 0) {
-            decompress(argv[1], argv[2]);
-        }else{
-            printf("Comando non valevole");
+        FILE *fin, *fout;
+        //check if file esxists
+        if((fin = fopen(argv[1], "rb")) && (fout = fopen(argv[2], "wb"))) {
+
+            //COMPRESS
+            if (strcmp(argv[0], "-c") == 0) {
+                compress(fin, fout);
+
+            //DECOMPRESS
+            } else if (strcmp(argv[0], "-d") == 0) {
+                decompress(fin, fout);
+            } else {
+                printf("Comando non valevole");
+            }
         }
+        
+    //1 argument
     }else if(argc == 1){
+        //HELP
         if(strcmp(argv[0], "-h") == 0){
             printf("Utilizzo: [opzione] [input file] [output file]\n\n"
                    "opzioni:\n"

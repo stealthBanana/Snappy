@@ -5,6 +5,8 @@
 #ifndef SNAPPY_DECOMPRESSION_H
 #define SNAPPY_DECOMPRESSION_H
 
-void decompress(char inputFile[], char outputFile[]);
+#include <stdio.h>
+
+void decompress(FILE *fin, FILE *fout);
 
 #endif //SNAPPY_DECOMPRESSION_H
