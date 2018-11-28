@@ -10,7 +10,7 @@
 #include <math.h>
 #include <malloc.h>
 
-char getSize(FILE *fin);
+char *getSize(FILE *fin);
 void compress(FILE *fin, FILE *fout);
 
 #endif //SNAPPY_COMPRESSION_H
