@@ -6,19 +6,29 @@
 char getSize(FILE *fin){
     fseek(fin, 0, SEEK_END);
     int intValueOfSize = ftell(fin);
+    fclose(fin);
+    //calcolo quanti bit servono per scrivere il numero della dimensione del file
     int numberOfBits = (int)log2(intValueOfSize);
+    //calcolo quanti byte servono per scrivere il numero della dimensione del file
     int numberOfBytes = ((double)numberOfBits/7 > 7) ? numberOfBits/7 +1 : numberOfBits/7;
-    char size;
-    size = malloc(numberOfBytes);
+    //istanzio un array di char lungo quanto i byte necessari per scrivere la  dimensione del file
+    char *size;
+    size = malloc(sizeof(char)*numberOfBytes);
+    //azzero i valori della stringa
+    for(int i = 0; i < numberOfBytes; i++)
+        size[i] = 0;
     for(int i = 0; i < (8*numberOfBytes); i++){
         int mask = 1 << (i%8);
-        if(i % 8 == 0 && i != 0){
+        int index = i/8;
+        //ogni 8 bit setto il flag del varint a 1
+        if(i % 8 == 7){
             if(i != (8*numberOfBytes -1))
-                size[numberOfBytes - (i / 8)] = atoi(size[7 - (i / 8)]) + mask;
+                size[index] = atoi(size[index]) | mask;
+            //se si tratta dell'ultimo bit setto il flag a 0
             else
-                size[numberOfBytes - (i / 8)] = atoi(size[7 - (i / 8)]) & 0x7f;
+                size[index] = atoi(size[index]) & 0x7f;
         }else {
-            size[numberOfBytes - (i / 8)] = atoi(size[7 - (i / 8)]) + (mask & intValueOfSize);
+            size[index] = atoi(size[index]) | (mask & intValueOfSize);
         }
     }
     return size;
