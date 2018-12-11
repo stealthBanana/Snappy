@@ -3,7 +3,7 @@
 #include "../header/compression.h"
 #include "../header/decompression.h"
 
-void main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
 
     //2 arguments
     if(argc == 4){
@@ -43,4 +43,6 @@ void main(int argc, char *argv[]) {
     }else{
         printf("Argomenti non validi, per saperne di piu inserire l'opzione \"-h\"");
     }
+
+    return 0;
 }
