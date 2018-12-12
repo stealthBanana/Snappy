@@ -10,6 +10,7 @@
 #include <string.h>
 #include <math.h>
 #include <malloc.h>
+#include "hashTable.h"
 
 unsigned char *getSize(FILE *fin);
 void compress(FILE *fin, FILE *fout);

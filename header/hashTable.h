@@ -5,10 +5,24 @@
 #ifndef SNAPPY_HASHTABLE_H
 #define SNAPPY_HASHTABLE_H
 
-#include "../source/compression.c"
+#include <stdlib.h>
+#include <string.h>
 
-void insert(Literal literal);
-int hash(Literal literal);
-Literal *searchMatch(Literal literal);
+typedef struct node{
+    unsigned char str[4];
+    int cursorPos;
+    struct node *next;
+}Node;
+
+typedef struct table{
+    int size;
+    Node *list;
+}Table;
+
+unsigned int intToLittleEndian(unsigned int i);
+void insert(Node node, Table *table);
+unsigned int hash(unsigned char str[4], int tableSize);
+int searchAndUpdateMatch(Node node, Table *table);
+void clearTable(Table *table);
 
 #endif //SNAPPY_HASHTABLE_H

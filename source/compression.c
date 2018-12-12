@@ -7,7 +7,6 @@ typedef struct literal{
     unsigned char *value;
     char *str;
     unsigned long size:7;
-    int cursorPos;
 }Literal;
 
 typedef struct match{
