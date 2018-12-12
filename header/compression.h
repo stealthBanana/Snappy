@@ -10,6 +10,8 @@
 #include <string.h>
 #include <math.h>
 #include <malloc.h>
+#include "literal.h"
+#include "match.h"
 #include "hashTable.h"
 
 unsigned char *getSize(FILE *fin);

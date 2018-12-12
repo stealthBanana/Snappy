@@ -7,6 +7,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include "utilities.h"
 
 typedef struct node{
     unsigned char str[4];
@@ -19,7 +20,6 @@ typedef struct table{
     Node *list;
 }Table;
 
-unsigned int intToLittleEndian(unsigned int i);
 void insert(Node node, Table *table);
 unsigned int hash(unsigned char str[4], int tableSize);
 int searchAndUpdateMatch(Node node, Table *table);

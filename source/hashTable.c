@@ -4,15 +4,9 @@
 
 #include "../header/hashTable.h"
 
-unsigned int intToLittleEndian(unsigned int val){
-    unsigned int result = 0;
-    for(int i = 0; i < 32; i++)
-        result = result | (((val & (1 << i)) >> i) << 31-i);
-    return result;
-};
-
 Table *createTable(int size){
     Table *table;
+    table = malloc(sizeof(Table));
     table->size = size;
     table->list = calloc(sizeof(Node), sizeof(Node)*size);
     return table;
@@ -42,7 +36,7 @@ void insert(Node node, Table *table){
 };
 
 int searchAndUpdateMatch(Node node, Table *table){
-    unsigned int key = hash(node.str, table.size);
+    unsigned int key = hash(node.str, table->size);
     Node dum = table->list[key];
     while(dum.next != NULL){
         if(strcmp(dum.str, node.str) == 0) {
