@@ -5,8 +5,11 @@
 
 //funzione che legge la dimensione del file da comprimere e la restituisce in varint
 unsigned char *getSize(FILE *fin){
+    //posiziono il cursore alla fine
     fseek(fin, 0, SEEK_END);
     unsigned int intValueOfSize = ftell(fin);
+    //posiziono il cursore all'inizio
+    fseek(fin, 0, SEEK_SET);
     //calcolo quanti bit servono per scrivere il numero della dimensione del file
     int numberOfBits = (int)log2(intValueOfSize)+1;
     //calcolo quanti byte servono per scrivere il numero della dimensione del file
@@ -35,7 +38,39 @@ void compress(FILE *fin, FILE *fout)
     fputs(size, fout);
     free(size);
 
+    unsigned char *c = calloc(sizeof(char), sizeof(char));
+    StringBuffer *str = createStringBuffer(4);
+    int cursorPos = 0;
+    Table *table = createTable(16384);
+    c[0] = fgetc(fin);
+    c[1] = 0;
+    while((char)c[0] != EOF){
+
+        put(str, c);
+
+        printf("%c",str->value[0]);
+
+        /*if(strlen(str->value) != 4){
+
+        }else {
+            Node *node = createNode(str->value, cursorPos, NULL);
+            int matchPos = searchAndUpdateMatch(*node, table);
+            if (matchPos == -1)
+                insert(*node, table);
+        }*/
+
+        if((cursorPos % 32000) == 31999)
+            clearTable(table);
+
+        cursorPos++;
+        c[0] = fgetc(fin);
+        c[1] = 0;
+    }
+
+    free(c);
+    free(str);
+    free(table);
+
     fclose(fin);
     fclose(fout);
 }
-

@@ -20,6 +20,8 @@ typedef struct table{
     Node *list;
 }Table;
 
+Node * createNode(char str[4], int cursorPos, Node *next);
+Table *createTable(int size);
 void insert(Node node, Table *table);
 unsigned int hash(unsigned char str[4], int tableSize);
 int searchAndUpdateMatch(Node node, Table *table);

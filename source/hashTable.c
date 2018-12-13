@@ -4,6 +4,13 @@
 
 #include "../header/hashTable.h"
 
+Node *createNode(char *str, int cursorPos, Node *next){
+    Node *node = malloc(sizeof(Node));
+    strcpy(node->str, str);
+    node->cursorPos = cursorPos;
+    node->next = calloc(sizeof(Node), sizeof(Node));
+}
+
 Table *createTable(int size){
     Table *table;
     table = malloc(sizeof(Table));
@@ -25,7 +32,7 @@ unsigned int hash(unsigned char str[4], int tableSize){
 
 void insert(Node node, Table *table){
     unsigned int key = hash(node.str, table->size);
-    if(&table->list[key] == NULL)
+    if((int)table->list[key].str[0] == 0)
         table->list[key] = node;
     else{
         Node dum = table->list[key];
@@ -38,13 +45,13 @@ void insert(Node node, Table *table){
 int searchAndUpdateMatch(Node node, Table *table){
     unsigned int key = hash(node.str, table->size);
     Node dum = table->list[key];
-    while(dum.next != NULL){
+    do{
         if(strcmp(dum.str, node.str) == 0) {
             int result = dum.cursorPos;
             dum.cursorPos = node.cursorPos;
             return result;
         }
-    }
+    }while(dum.next != NULL);
     return -1;
 };
 

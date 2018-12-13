@@ -13,6 +13,8 @@
 #include "literal.h"
 #include "match.h"
 #include "hashTable.h"
+#include "stringBuffer.h"
+#include "utilities.h"
 
 unsigned char *getSize(FILE *fin);
 void compress(FILE *fin, FILE *fout);
