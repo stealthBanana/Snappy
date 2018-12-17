@@ -15,7 +15,7 @@ Table *createTable(int size){
     Table *table;
     table = malloc(sizeof(Table));
     table->size = size;
-    table->list = calloc(sizeof(Node), sizeof(Node)*size);
+    table->list = calloc(sizeof(Node), sizeof(Node)*(size-1));
     return table;
 };
 
@@ -30,28 +30,27 @@ unsigned int hash(unsigned char str[4], int tableSize){
     return (unsigned int)result;
 };
 
-void insert(Node node, Table *table){
-    unsigned int key = hash(node.str, table->size);
+void insert(Node *node, Table *table){
+    unsigned int key = hash(node->str, table->size);
     if((int)table->list[key].str[0] == 0)
-        table->list[key] = node;
+        memcpy(table->list+key, node, sizeof(Node));
     else{
-        Node dum = table->list[key];
-        while(dum.next != NULL)
-            dum = *dum.next;
-        dum.next = &node;
+        Node *dum = table->list+key;
+        while(dum->next->str[0] != 0)
+            memcpy(dum, dum->next, sizeof(Node));
+        memcpy(dum->next, node, sizeof(Node));
+        free(dum);
     }
 };
 
-int searchAndUpdateMatch(Node node, Table *table){
-    unsigned int key = hash(node.str, table->size);
-    Node dum = table->list[key];
-    do{
-        if(strcmp(dum.str, node.str) == 0) {
-            int result = dum.cursorPos;
-            dum.cursorPos = node.cursorPos;
-            return result;
-        }
-    }while(dum.next != NULL);
+int searchAndUpdateMatch(Node *node, Table *table){
+    unsigned int key = hash(node->str, table->size);
+    Node *dum = table->list+key;
+    if(memcmp(dum->str, node->str, 4) == 0) {
+        int result = dum->cursorPos;
+        dum->cursorPos = node->cursorPos;
+        return result;
+    }
     return -1;
 };
 

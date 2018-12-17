@@ -3,6 +3,9 @@
 //
 #include "../header/compression.h"
 
+#define HASH_TABLE_SIZE 16385
+#define WINDOW_SIZE 32000
+
 //funzione che legge la dimensione del file da comprimere e la restituisce in varint
 unsigned char *getSize(FILE *fin){
     //posiziono il cursore alla fine
@@ -41,28 +44,26 @@ void compress(FILE *fin, FILE *fout)
     unsigned char *c = calloc(sizeof(char), sizeof(char));
     StringBuffer *str = createStringBuffer(4);
     int cursorPos = 0;
-    Table *table = createTable(16384);
+    Table *table = createTable(HASH_TABLE_SIZE);
     c[0] = fgetc(fin);
     c[1] = 0;
     while((char)c[0] != EOF){
 
         put(str, c);
 
-        printf("%c",str->value[0]);
-
-        /*if(strlen(str->value) != 4){
+        if(strlen(str->value) != 4){
 
         }else {
             Node *node = createNode(str->value, cursorPos, NULL);
-            int matchPos = searchAndUpdateMatch(*node, table);
+            int matchPos = searchAndUpdateMatch(node, table);
             if (matchPos == -1)
-                insert(*node, table);
-        }*/
+                insert(node, table);
+            cursorPos++;
+        }
 
-        if((cursorPos % 32000) == 31999)
+        if((cursorPos % WINDOW_SIZE) == WINDOW_SIZE-1)
             clearTable(table);
 
-        cursorPos++;
         c[0] = fgetc(fin);
         c[1] = 0;
     }

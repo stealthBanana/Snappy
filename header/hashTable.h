@@ -22,9 +22,9 @@ typedef struct table{
 
 Node * createNode(char str[4], int cursorPos, Node *next);
 Table *createTable(int size);
-void insert(Node node, Table *table);
+void insert(Node *node, Table *table);
 unsigned int hash(unsigned char str[4], int tableSize);
-int searchAndUpdateMatch(Node node, Table *table);
+int searchAndUpdateMatch(Node *node, Table *table);
 void clearTable(Table *table);
 
 #endif //SNAPPY_HASHTABLE_H
