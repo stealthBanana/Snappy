@@ -9,12 +9,13 @@
 #include <string.h>
 
 typedef struct stringBuffer{
-    char *value;
+    unsigned char *value;
     int size;
 }StringBuffer;
 
 StringBuffer *createStringBuffer(int size);
-char push(StringBuffer *strBfr);
+unsigned char push(StringBuffer *strBfr);
 void put(StringBuffer *strBfr, unsigned char *c);
+unsigned char *clearStringBuffer(StringBuffer *strBfr);
 
 #endif //SNAPPY_STRINGBUFFER_H

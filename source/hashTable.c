@@ -5,17 +5,17 @@
 #include "../header/hashTable.h"
 
 Node *createNode(char *str, int cursorPos, Node *next){
-    Node *node = malloc(sizeof(Node));
+    Node *node = (Node*) malloc(sizeof(Node));
     strcpy(node->str, str);
     node->cursorPos = cursorPos;
-    node->next = calloc(sizeof(Node), sizeof(Node));
+    node->next = (Node*) calloc(sizeof(Node), sizeof(Node));
 }
 
 Table *createTable(int size){
     Table *table;
-    table = malloc(sizeof(Table));
+    table = (Table*) malloc(sizeof(Table));
     table->size = size;
-    table->list = calloc(sizeof(Node), sizeof(Node)*(size-1));
+    table->list = (Node*) calloc(sizeof(Node), sizeof(Node)*(size-1));
     return table;
 };
 
@@ -39,7 +39,6 @@ void insert(Node *node, Table *table){
         while(dum->next->str[0] != 0)
             memcpy(dum, dum->next, sizeof(Node));
         memcpy(dum->next, node, sizeof(Node));
-        free(dum);
     }
 };
 
@@ -55,5 +54,5 @@ int searchAndUpdateMatch(Node *node, Table *table){
 };
 
 void clearTable(Table *table){
-    table->list = realloc(table->list, sizeof(Node)*table->size);
+    table->list = (Table*) realloc(table->list, sizeof(Node)*table->size);
 };

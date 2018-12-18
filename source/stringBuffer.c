@@ -6,14 +6,14 @@
 
 StringBuffer *createStringBuffer(int size) {
     StringBuffer *strBfr;
-    strBfr = malloc(sizeof(StringBuffer));
+    strBfr = (StringBuffer*) malloc(sizeof(StringBuffer));
     strBfr->size = size;
-    strBfr->value = calloc(sizeof(char), sizeof(char)*size);
+    strBfr->value = (unsigned char*) calloc(sizeof(char), sizeof(char)*size);
     return strBfr;
 }
 
-char push(StringBuffer *strBfr){
-    char c = strBfr->value[0];
+unsigned char push(StringBuffer *strBfr){
+    unsigned char c = strBfr->value[0];
     strcpy(strBfr->value, strBfr->value+1);
     return c;
 }
@@ -21,11 +21,12 @@ char push(StringBuffer *strBfr){
 void put(StringBuffer *strBfr, unsigned char *c){
     if(strlen(strBfr->value) == strBfr->size)
         push(strBfr);
-    strcpy(strBfr->value, strcat(strBfr->value, c));
+    strcpy(strBfr->value, strcat(strBfr->value, (const char *) c));
 }
 
-char *clear(StringBuffer *strBfr) {
-    char *str = strBfr->value;
-    strBfr->value = realloc(strBfr->value, sizeof(char)*strBfr->size);
+unsigned char *clearStringBuffer(StringBuffer *strBfr) {
+    unsigned char *str = strBfr->value;
+    //PROBLEMO
+    strBfr->value = (unsigned char*) realloc(strBfr->value, sizeof(char)*strBfr->size);
     return str;
 }

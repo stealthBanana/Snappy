@@ -9,13 +9,13 @@
 Literal *getLiteral(char *str){
     //creo una struttura per il literal
     Literal *literal;
-    literal = malloc(sizeof(Literal));
+    literal = (Literal*) malloc(sizeof(Literal));
 
     //lunghezza = la lughezza del literal -1
     unsigned char length = strlen(str)-1;
     //alloco la memoria per il literale (+2 perchè length è la lunghezza -1)
     unsigned char *value;
-    value = calloc(sizeof(char), sizeof(char)*(length+2));
+    value = (unsigned char*) calloc(sizeof(char), sizeof(char)*(length+1));
     //setto il tag del literal (00)
     value[0] = value[0] & 0;
     //setto la lunghezza del literal;
@@ -24,7 +24,8 @@ Literal *getLiteral(char *str){
     strcat(&value[1], str);
 
     //assegno i valori alla struttura
+    literal->value = (unsigned char*) calloc(sizeof(char), sizeof(char)*(length+1));
     strcpy(literal->value, value);
-    literal->size = length+2;
+    literal->size = length+1;
     return literal;
 }

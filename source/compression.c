@@ -19,7 +19,7 @@ unsigned char *getSize(FILE *fin){
     int numberOfBytes = ceil((double)numberOfBits/7);
     //istanzio un array di char lungo quanto i byte necessari per scrivere la  dimensione del file
     unsigned char *size;
-    size = (char*)calloc(sizeof(char), sizeof(char)*numberOfBytes);
+    size = (unsigned char*) calloc(sizeof(char), sizeof(char)*numberOfBytes);
     //per ogni byte della dimensione del file scorro tutti i bit (i byte vengono letti al contrario)
     for(int i = 0; i < numberOfBytes; i++){
         for(int j = 0; j < 7; j++){
@@ -41,24 +41,33 @@ void compress(FILE *fin, FILE *fout)
     fputs(size, fout);
     free(size);
 
-    unsigned char *c = calloc(sizeof(char), sizeof(char));
+    unsigned char *c = (unsigned char*) calloc(sizeof(char), sizeof(char));
     StringBuffer *str = createStringBuffer(4);
     int cursorPos = 0;
+    StringBuffer *literalStr = createStringBuffer(64);
     Table *table = createTable(HASH_TABLE_SIZE);
     c[0] = fgetc(fin);
     c[1] = 0;
     while((char)c[0] != EOF){
 
         put(str, c);
+        put(literalStr, c);
 
         if(strlen(str->value) != 4){
 
         }else {
             Node *node = createNode(str->value, cursorPos, NULL);
             int matchPos = searchAndUpdateMatch(node, table);
-            if (matchPos == -1)
+            if (matchPos == -1) {
                 insert(node, table);
+            }
             cursorPos++;
+        }
+
+        if(strlen(literalStr->value) == literalStr->size){
+            Literal *literal = getLiteral(literalStr->value);
+            printBytes(literal->value, literal->size, fout);
+            clearStringBuffer(literalStr);
         }
 
         if((cursorPos % WINDOW_SIZE) == WINDOW_SIZE-1)
@@ -70,6 +79,7 @@ void compress(FILE *fin, FILE *fout)
 
     free(c);
     free(str);
+    free(literalStr);
     free(table);
 
     fclose(fin);

@@ -10,7 +10,7 @@
 
 typedef struct literal{
     unsigned char *value;
-    unsigned long size:7;
+    unsigned short size:7;
 }Literal;
 
 //funzione che costruisce la codifica di un literal in base alla stringa passata come paramentro
