@@ -6,9 +6,9 @@
 void main(int argc, char *argv[]) {
 
     //2 arguments
-    if(argc == 2){
+    /*if(argc == 2){
         FILE *fin, *fout;
-        //check if file esxists
+        //check if file exists
         if((fin = fopen(argv[1], "rb")) && (fout = fopen(argv[2], "wb"))) {
 
             //COMPRESS
@@ -38,5 +38,9 @@ void main(int argc, char *argv[]) {
         }
     }else{
         printf("Argomenti non validi, per saperne di piu inserire l'opzione \"-h\"");
-    }
+    }*/
+    unsigned long number = 0x6162;
+    char *result;
+    result = literal(number);
+    printf("%s", result);
 }

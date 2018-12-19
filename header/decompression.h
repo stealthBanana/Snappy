@@ -7,6 +7,8 @@
 
 #include <stdio.h>
 
-void decompress(FILE *fin, FILE *fout);
+void decompress(FILE, FILE);
+unsigned long dim(unsigned long);
+char *literal(unsigned long);
 
 #endif //SNAPPY_DECOMPRESSION_H
