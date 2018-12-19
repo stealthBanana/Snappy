@@ -53,21 +53,35 @@ char *literal(unsigned long x){
     return str;
 }
 
-char *oneMatch(unsigned int y){
+char *oneMatch(unsigned int y, FILE *fout){
+    int i = 0;
     char *str;
     //applico una maschera 1110 0000 1111 1111 che prende gli 11 bit di offset
     unsigned int offset = y & 0xE0FF;
     //applico una maschera 0001 1100 0000 0000 per prendere la lunghezza del match
     unsigned char length = y & 0x1C00;
+    fseek(fout, -offset, SEEK_END);
+    while(length){
+        strcat(&str[i], fgetc(fout));
+        i++;
+        length--;
+    }
     return str;
 }
 
-char *twoMatch(unsigned long z){
+char *twoMatch(unsigned long z, FILE *fout){
     char *str;
+    int i = 0;
     //applico una maschera 0000 0000 1111 1111 1111 1111 che prende i 2 byte di offset
     unsigned int offset = z & 0xFFFF;
     //applico una maschera 1111 1100 0000 0000 per prendere la lunghezza del match
     unsigned char length = z & 0xFC0000;
+    fseek(fout, -offset, SEEK_END);
+    while(length){
+        strcat(&str[i], fgetc(fout));
+        i++;
+        length--;
+    }
     return str;
 }
 
@@ -75,7 +89,7 @@ char *twoMatch(unsigned long z){
  * 0000 0011 ai byte che vengono passati per la lettura del tag e, a dipendenza del tag, chiamare
  * il metodo ad esso associato per le trasformazioni necessarie
  */
-void tagRead(unsigned long c){
+void tagRead(unsigned long c, FILE *fout){
     int c1 = (int) c & 0x3;
     switch(c1) {
         case 0:
@@ -88,10 +102,10 @@ void tagRead(unsigned long c){
              * completare l'offset e nel secondo c'è la lunghezza del match
              */
         case 1:
-            oneMatch(c);
+            oneMatch(c, fout);
             break;
         case 2:
-            twoMatch(c);
+            twoMatch(c, fout);
             break;
         case 3:
             printf("4 byte match not permited!");
