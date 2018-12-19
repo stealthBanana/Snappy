@@ -79,8 +79,14 @@ void tagRead(unsigned long c){
     int c1 = (int) c & 0x3;
     switch(c1) {
         case 0:
+            /* al metodo literal dovrebbero essere passati solo i byte con i caratteri, il primo byte (con tag e lunghezza)
+             * non serve
+             */
             literal(c);
             break;
+            /* ai metodi di match invece serve anche il primo byte visto che nel primo caso aiuta a
+             * completare l'offset e nel secondo c'è la lunghezza del match
+             */
         case 1:
             oneMatch(c);
             break;
