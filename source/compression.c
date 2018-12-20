@@ -43,27 +43,70 @@ void compress(FILE *fin, FILE *fout)
 
     unsigned char *c = (unsigned char*) calloc(sizeof(char), sizeof(char));
     StringBuffer *str = createStringBuffer(4);
-    int cursorPos = 0;
-    int matchPos = -1;
     StringBuffer *literalStr = createStringBuffer(64);
     Table *table = createTable(HASH_TABLE_SIZE);
+    int cursorPos = 0;
+    int matchPos = -1;
+    int matchLength = 0;
+    int matchOffset = 0;
+    int matchCounter = 0;
+    int writeMatchFlag = 0;
     c[0] = fgetc(fin);
     c[1] = 0;
     while((char)c[0] != EOF){
 
         put(str, c);
         put(literalStr, c);
+
         if(strlen(str->value) == 4) {
             Node *node = createNode(str->value, cursorPos, NULL, table);
             matchPos = searchAndUpdateMatch(node, table);
-            if (matchPos == -1)
+
+            //no match
+            if (matchPos == -1) {
                 insert(node, table);
-            else
-                unqueue(literalStr, 4);
+                matchCounter = 0;
+                writeMatchFlag = 1;
+            }
+
+            //match
+            else {
+                matchCounter++;
+
+                //primo match
+                if(matchLength == 0) {
+                    matchLength = 4;
+                    matchOffset = cursorPos - matchPos;
+                    unqueue(literalStr, 4);
+                }
+
+                //prossimo match consecutivo
+                else if(matchLength > 0 && (cursorPos-matchPos-matchCounter+1) == matchOffset){
+                    matchLength++;
+                    unqueue(literalStr, 1);
+                }
+
+                //prossimo match non consecutivo
+                else{
+                    matchCounter--;
+                    writeMatchFlag = 1;
+                }
+            }
+
+            cursorPos++;
         }
 
-        cursorPos++;
+        //creo e scrivo il match
+        if(writeMatchFlag && (matchLength != 0)){
+            Match *match = getMatch(matchLength, matchOffset);
+            printf("%d : %d\n", matchLength, matchOffset);
+            printBytes(match->value, match->size, fout);
+            matchLength = 0;
+            matchOffset = 0;
+        }
+        writeMatchFlag = 0;
 
+        //creo e scrivo il literal
         if((matchPos != -1 && strlen(literalStr->value) != 0) || strlen(literalStr->value) == literalStr->size){
             Literal *literal = getLiteral(literalStr->value);
             printf("%s\n", literal->value);
@@ -79,7 +122,6 @@ void compress(FILE *fin, FILE *fout)
     }
 
     Literal *literal = getLiteral(literalStr->value);
-    printf("%s\n", literal->value);
     printBytes(literal->value, literal->size, fout);
     clearStringBuffer(literalStr);
 
@@ -90,5 +132,4 @@ void compress(FILE *fin, FILE *fout)
 
     fclose(fin);
     fclose(fout);
-
 }

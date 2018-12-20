@@ -18,7 +18,8 @@ Match *getMatch(unsigned char length, unsigned short offset){
         //assegno alla struttura la lunghezza del match
         match->size = 2;
         //alloco la memoria per il match (2 Byte)
-        value = calloc(sizeof(char), sizeof(char) * 2);
+        value = (unsigned char*) calloc(sizeof(char), sizeof(char) * 2);
+        match->value = (unsigned char*) calloc(sizeof(char), sizeof(char) * 2);
         //setto il tag del match (01)
         value[0] = value[0] | 0b1;
         //lunghezza = la lunghezza del match -4
@@ -35,7 +36,8 @@ Match *getMatch(unsigned char length, unsigned short offset){
         //assegno alla struttura la lunghezza del match
         match->size = 3;
         //alloco la memoria per il match (3 Byte)
-        value = calloc(sizeof(char), sizeof(char) * 3);
+        value = (unsigned char*) calloc(sizeof(char), sizeof(char) * 3);
+        match->value = (unsigned char*) calloc(sizeof(char), sizeof(char) * 3);
         //setto il tag del match (10)
         value[0] = value[0] | 0b10;
         //lunghezza = la lunghezza del match -1
