@@ -6,7 +6,7 @@
 
 //funzione che ritorna la codifica di un literal
 //parametro str da 1 a 64 caratteri
-Literal *getLiteral(char *str){
+Literal *getLiteral(unsigned char *str){
     //creo una struttura per il literal
     Literal *literal;
     literal = (Literal*) malloc(sizeof(Literal));
@@ -15,7 +15,7 @@ Literal *getLiteral(char *str){
     unsigned char length = strlen(str)-1;
     //alloco la memoria per il literale (+2 perchè length è la lunghezza -1)
     unsigned char *value;
-    value = (unsigned char*) calloc(sizeof(char), sizeof(char)*(length+1));
+    value = (unsigned char*) calloc(sizeof(char), sizeof(char)*(length+2));
     //setto il tag del literal (00)
     value[0] = value[0] & 0;
     //setto la lunghezza del literal;
@@ -24,7 +24,8 @@ Literal *getLiteral(char *str){
     strcat(&value[1], str);
 
     //assegno i valori alla struttura
-    literal->value = (unsigned char*) calloc(sizeof(char), sizeof(char)*(length+1));
+    literal->value = (unsigned char*) calloc(sizeof(char), sizeof(char)*(length+2));
+    //memcpy(literal->value, value, sizeof(char)*(length+2));
     strcpy(literal->value, value);
     literal->size = length+1;
     return literal;

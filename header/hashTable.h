@@ -12,6 +12,7 @@
 typedef struct node{
     unsigned char str[4];
     int cursorPos;
+    unsigned int hash;
     struct node *next;
 }Node;
 
@@ -20,7 +21,7 @@ typedef struct table{
     Node *list;
 }Table;
 
-Node * createNode(char str[4], int cursorPos, Node *next);
+Node * createNode(char str[4], int cursorPos, Node *next, Table *table);
 Table *createTable(int size);
 void insert(Node *node, Table *table);
 unsigned int hash(unsigned char str[4], int tableSize);

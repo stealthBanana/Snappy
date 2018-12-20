@@ -44,6 +44,7 @@ void compress(FILE *fin, FILE *fout)
     unsigned char *c = (unsigned char*) calloc(sizeof(char), sizeof(char));
     StringBuffer *str = createStringBuffer(4);
     int cursorPos = 0;
+    int matchPos = -1;
     StringBuffer *literalStr = createStringBuffer(64);
     Table *table = createTable(HASH_TABLE_SIZE);
     c[0] = fgetc(fin);
@@ -52,20 +53,20 @@ void compress(FILE *fin, FILE *fout)
 
         put(str, c);
         put(literalStr, c);
-
-        if(strlen(str->value) != 4){
-
-        }else {
-            Node *node = createNode(str->value, cursorPos, NULL);
-            int matchPos = searchAndUpdateMatch(node, table);
-            if (matchPos == -1) {
+        if(strlen(str->value) == 4) {
+            Node *node = createNode(str->value, cursorPos, NULL, table);
+            matchPos = searchAndUpdateMatch(node, table);
+            if (matchPos == -1)
                 insert(node, table);
-            }
-            cursorPos++;
+            else
+                unqueue(literalStr, 4);
         }
 
-        if(strlen(literalStr->value) == literalStr->size){
+        cursorPos++;
+
+        if((matchPos != -1 && strlen(literalStr->value) != 0) || strlen(literalStr->value) == literalStr->size){
             Literal *literal = getLiteral(literalStr->value);
+            printf("%s\n", literal->value);
             printBytes(literal->value, literal->size, fout);
             clearStringBuffer(literalStr);
         }
@@ -77,11 +78,17 @@ void compress(FILE *fin, FILE *fout)
         c[1] = 0;
     }
 
+    Literal *literal = getLiteral(literalStr->value);
+    printf("%s\n", literal->value);
+    printBytes(literal->value, literal->size, fout);
+    clearStringBuffer(literalStr);
+
+
     free(c);
     free(str);
     free(literalStr);
-    free(table);
 
     fclose(fin);
     fclose(fout);
+
 }

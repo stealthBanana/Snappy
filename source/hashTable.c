@@ -4,10 +4,11 @@
 
 #include "../header/hashTable.h"
 
-Node *createNode(char *str, int cursorPos, Node *next){
+Node *createNode(char *str, int cursorPos, Node *next, Table *table){
     Node *node = (Node*) malloc(sizeof(Node));
     strcpy(node->str, str);
     node->cursorPos = cursorPos;
+    node->hash = hash(node->str, table->size);
     node->next = (Node*) calloc(sizeof(Node), sizeof(Node));
 }
 
@@ -31,28 +32,32 @@ unsigned int hash(unsigned char str[4], int tableSize){
 };
 
 void insert(Node *node, Table *table){
-    unsigned int key = hash(node->str, table->size);
+    unsigned int key = node->hash;
     if((int)table->list[key].str[0] == 0)
         memcpy(table->list+key, node, sizeof(Node));
     else{
         Node *dum = table->list+key;
         while(dum->next->str[0] != 0)
-            memcpy(dum, dum->next, sizeof(Node));
-        memcpy(dum->next, node, sizeof(Node));
+            dum = dum->next;
+        dum->next = node;
     }
 };
 
 int searchAndUpdateMatch(Node *node, Table *table){
-    unsigned int key = hash(node->str, table->size);
+    unsigned int key = node->hash;
     Node *dum = table->list+key;
-    if(memcmp(dum->str, node->str, 4) == 0) {
-        int result = dum->cursorPos;
-        dum->cursorPos = node->cursorPos;
-        return result;
+    while(dum->str[0] != 0) {
+        if (memcmp(dum->str, node->str, 4) == 0) {
+            int result = dum->cursorPos;
+            dum->cursorPos = node->cursorPos;
+            return result;
+        }
+        dum = dum->next;
     }
     return -1;
 };
 
 void clearTable(Table *table){
-    table->list = (Table*) realloc(table->list, sizeof(Node)*table->size);
+    Table *emptyTable = createTable(table->size);
+    table = emptyTable;
 };

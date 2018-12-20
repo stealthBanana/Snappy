@@ -8,8 +8,8 @@ int main(int argc, char *argv[]) {
     //2 arguments
     if(argc == 4){
         FILE *fin, *fout;
-        //check if file esxists
-        if((fin = fopen(argv[2], "rb")) && (fout = fopen(argv[3], "wb"))) {
+        //check if file exists
+        if((fin = fopen(argv[2], "rb")) && (fout = fopen(argv[3], "wb+"))) {
 
             //COMPRESS
             if (strcmp(argv[1], "-c") == 0) {

@@ -8,12 +8,14 @@
 #include <malloc.h>
 #include <string.h>
 
+#include <stdio.h>
+
 typedef struct literal{
     unsigned char *value;
-    unsigned short size:7;
+    unsigned int size:7;
 }Literal;
 
 //funzione che costruisce la codifica di un literal in base alla stringa passata come paramentro
-Literal *getLiteral(char *str);
+Literal *getLiteral(unsigned char *str);
 
 #endif //SNAPPY_LITERAL_H

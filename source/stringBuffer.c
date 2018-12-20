@@ -26,7 +26,15 @@ void put(StringBuffer *strBfr, unsigned char *c){
 
 unsigned char *clearStringBuffer(StringBuffer *strBfr) {
     unsigned char *str = strBfr->value;
-    //PROBLEMO
-    strBfr->value = (unsigned char*) realloc(strBfr->value, sizeof(char)*strBfr->size);
+    strcpy(strBfr->value, "");
     return str;
+}
+
+void unqueue(StringBuffer *strBfr, int n){
+    if(strlen(strBfr->value) < n || strBfr->size < n)
+        clearStringBuffer(strBfr);
+    else {
+        n = strlen(strBfr->value) - n;
+        strcpy(strBfr->value + n, "");
+    }
 }
