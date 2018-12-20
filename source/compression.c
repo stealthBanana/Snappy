@@ -71,18 +71,20 @@ void compress(FILE *fin, FILE *fout)
 
             //match
             else {
-                matchCounter++;
 
                 //primo match
                 if(matchLength == 0) {
                     matchLength = 4;
                     matchOffset = cursorPos - matchPos;
+                    matchCounter = 1;
                     unqueue(literalStr, 4);
                 }
 
                 //prossimo match consecutivo
-                else if(matchLength > 0 && (cursorPos-matchPos-matchCounter+1) == matchOffset){
+                else if(matchLength > 0 && (cursorPos-matchPos-matchOffset+matchCounter-1) == 0){
                     matchLength++;
+                    matchOffset++;
+                    matchCounter++;
                     unqueue(literalStr, 1);
                 }
 
