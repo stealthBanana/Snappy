@@ -22,11 +22,13 @@ Literal *getLiteral(unsigned char *str){
     value[0] = value[0] | (length << 2);
     //copio il literale dal secondo Byte in avanti
     strcat(&value[1], str);
+    //printf("ok");
 
     //assegno i valori alla struttura
     literal->value = (unsigned char*) calloc(sizeof(char), sizeof(char)*(length+2));
-    //memcpy(literal->value, value, sizeof(char)*(length+2));
+    //printf("ok");
     strcpy(literal->value, value);
-    literal->size = length+1;
+    //printf("ok");
+    literal->size = length+2;
     return literal;
 }

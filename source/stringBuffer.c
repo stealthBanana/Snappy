@@ -30,8 +30,8 @@ unsigned char *clearStringBuffer(StringBuffer *strBfr) {
     return str;
 }
 
-void unqueue(StringBuffer *strBfr, int n){
-    if(strlen(strBfr->value) < n || strBfr->size < n)
+void unqueue(StringBuffer *strBfr, int n) {
+    if (strlen(strBfr->value) < n || strBfr->size < n)
         clearStringBuffer(strBfr);
     else {
         n = strlen(strBfr->value) - n;

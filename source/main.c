@@ -21,11 +21,14 @@ int main(int argc, char *argv[]) {
             } else {
                 printf("Comando non valevole");
             }
+
+            fclose(fin);
+            fclose(fout);
+
         }else{
             //Se non riesco ad aprire il file
+            printf("Il file sorgente specificato non esiste");
         }
-        fclose(fin);
-        fclose(fout);
 
     //1 argument
     }else if(argc == 2){
