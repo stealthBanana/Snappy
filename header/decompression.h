@@ -7,8 +7,14 @@
 
 #include <stdio.h>
 
-void decompress(FILE, FILE);
 unsigned long dim(unsigned long);
-char *literal(unsigned long);
+unsigned long inv(unsigned long);
+void literal(unsigned long, FILE *);
+void oneMatch(unsigned int, unsigned int, FILE *);
+void twoMatch(unsigned int, unsigned int, FILE *);
+void decompress(FILE *, FILE *);
+
+
+
 
 #endif //SNAPPY_DECOMPRESSION_H

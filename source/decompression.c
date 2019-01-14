@@ -5,20 +5,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-//ci ho giocato un po' ma non fa ancora niente, questo metodo dovrebbe gestire l'interazione dei vari altri metodi
-void decompress(FILE *fin, FILE *fout) {
-    char *buffer;
-    long filelen;
-
-    fseek(fin, 0, SEEK_END);
-    filelen = ftell(fin);
-    rewind(fin);
-
-    buffer = (char *)malloc((filelen+1)* sizeof(char));
-    fread(buffer, filelen, 1, fin);
-}
-
-//Finora questo è l'unico metodo che funziona al 100%
 unsigned long dim(unsigned long d){
     unsigned long c = d;
     int n = 0;
@@ -35,82 +21,94 @@ unsigned long dim(unsigned long d){
     return p;
 }
 
-//Questo metodo assume che venga passato il numero di caratteri giusto, senza il byte con la lunghezza del literal e il tag;
-char *literal(unsigned long x){
-    char *str;
-    unsigned long c = x;
-    int n = 0;
-    int p = 0;
-    //conto quanti caratteri ci sono
-    while(c){
-        n++;
-        c = c >> 8;
+unsigned long inv(unsigned long b){
+    unsigned long inv = 0;
+    while(b){
+        inv = (inv << 1) | (b & 1);
+        b = b >> 1;
     }
-    //applico una maschera 1111 1111 su ogni byte e lo concateno alla stringa di ritorno
-    while(n){
-        strcat(&str[p], (char *)(x & (0xFF << (8*(n-1-p)))));
-    }
-    return str;
+    return inv;
 }
 
-char *oneMatch(unsigned int y, FILE *fout){
-    int i = 0;
-    char *str;
-    //applico una maschera 1110 0000 1111 1111 che prende gli 11 bit di offset
-    unsigned int offset = y & 0xE0FF;
-    //applico una maschera 0001 1100 0000 0000 per prendere la lunghezza del match
-    unsigned char length = y & 0x1C00;
-    fseek(fout, -offset, SEEK_END);
-    while(length){
-        strcat(&str[i], fgetc(fout));
-        i++;
-        length--;
+void literal(unsigned long x, FILE *fout){
+    int c;
+    unsigned long lit = inv(x);
+    while(lit){
+        c = lit & 0xFF;
+        lit = lit >> 8;
+        fputc(c, fout);
     }
-    return str;
 }
 
-char *twoMatch(unsigned long z, FILE *fout){
-    char *str;
-    int i = 0;
-    //applico una maschera 0000 0000 1111 1111 1111 1111 che prende i 2 byte di offset
-    unsigned int offset = z & 0xFFFF;
-    //applico una maschera 1111 1100 0000 0000 per prendere la lunghezza del match
-    unsigned char length = z & 0xFC0000;
-    fseek(fout, -offset, SEEK_END);
-    while(length){
-        strcat(&str[i], fgetc(fout));
-        i++;
-        length--;
+void oneMatch(unsigned int len, unsigned int offset, FILE *fout){
+    char c;
+    for(int i = 0; i < len; i++){
+        fseek(fout, -offset+i, SEEK_END);
+        c = fgetc(fout);
+        fseek(fout, 0, SEEK_END);
+        fputc(c, fout);
     }
-    return str;
 }
 
-/*in realtà non fa ancora niente, dovrei passarli lo stream e dovrebbe applicare una maschera
- * 0000 0011 ai byte che vengono passati per la lettura del tag e, a dipendenza del tag, chiamare
- * il metodo ad esso associato per le trasformazioni necessarie
- */
-void tagRead(unsigned long c, FILE *fout){
-    int c1 = (int) c & 0x3;
-    switch(c1) {
-        case 0:
-            /* al metodo literal dovrebbero essere passati solo i byte con i caratteri, il primo byte (con tag e lunghezza)
-             * non serve
-             */
-            literal(c);
-            break;
-            /* ai metodi di match invece serve anche il primo byte visto che nel primo caso aiuta a
-             * completare l'offset e nel secondo c'è la lunghezza del match
-             */
-        case 1:
-            oneMatch(c, fout);
-            break;
-        case 2:
-            twoMatch(c, fout);
-            break;
-        case 3:
-            printf("4 byte match not permited!");
-            break;
-        default:
-            break;
+void twoMatch(unsigned int len, unsigned int offset, FILE *fout){
+    char c;
+    for(int i = 0; i < len; i++){
+        fseek(fout, -offset+i, SEEK_END);
+        c = fgetc(fout);
+        fseek(fout, 0, SEEK_END);
+        fputc(c, fout);
+    }
+}
+
+void decompress(FILE *fin, FILE *fout) {
+    unsigned char c;
+    unsigned long dimbits = 0;
+    unsigned long dimension = 0;
+    unsigned char tag = 0;
+    unsigned long input = 0;
+    unsigned length = 0;
+    unsigned int offset = 0;
+    if((c = fgetc(fin)) & 0x80 == 0){
+        dimbits = dimbits | (c & 0x7F);
+    }
+    else {
+        while ((c = fgetc(fin)) & 0x80 == 1) {
+            dimbits = dimbits | (c & 0x7F);
+            dimbits = dimbits << 7;
+        }
+        dimbits = dimbits | (c & 0x7F);
+    }
+    dimension = dim(dimbits);
+    while(dimension){
+        c = fgetc(fin);
+        tag = c & 0x3;
+        switch(tag){
+            case 0:
+                length = c & 0xFC;
+                int a = length;
+                while(a){
+                    input = input << 8;
+                    input = input | fgetc(fin);
+                    a--;
+                }
+                literal(input, fout);
+                dimension = dimension - length - 1;
+                break;
+            case 1:
+                length = c & 0x1c;
+                offset = ((c & 0xE0) << 3) | fgetc(fin);
+                oneMatch(length, offset, fout);
+                dimension = dimension - 2;
+                break;
+            case 2:
+                length = c & 0xFC;
+                offset = (fgetc(fin) << 8) & fgetc(fin);
+                twoMatch(length, offset, fout);
+                dimension = dimension - 3;
+                break;
+            default:
+                printf("4 byte match not allowed!");
+                break;
+        }
     }
 }
