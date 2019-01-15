@@ -90,7 +90,7 @@ void decompress(FILE *fin, FILE *fout) {
                 int cycle = ceil((length*1.0)/4);
                 for(int i = 0; i < cycle; i++){
                     int a = 4;
-                    if((i == 1) && (length%4!=0)){
+                    if((i == (cycle-1)) && (length%4!=0)){
                         a = length%4;
                     }
                     while(a){
@@ -110,8 +110,10 @@ void decompress(FILE *fin, FILE *fout) {
                 dimension = dimension - length;
                 break;
             case 2:
-                length = c & 0xFC;
-                offset = (fgetc(fin) << 8) & fgetc(fin);
+                length = (c & 0xFC) + 1;
+                offset = fgetc(fin);
+                offset = offset << 8;
+                offset = offset | fgetc(fin);
                 twoMatch(length, offset, fout);
                 dimension = dimension - length;
                 break;
