@@ -126,8 +126,13 @@ void compress(FILE *fin, FILE *fout)
     }
 
     end = clock();
-    unsigned long timeTaken = (unsigned long)(((double)(end - start)/CLOCKS_PER_SEC)*3600);
-    printf("\n\nTempo impiegato: %lu ms\n", timeTaken);
+    unsigned long timeTakenms = (unsigned long)(((double)(end - start)/CLOCKS_PER_SEC)*1000);
+    if(timeTakenms < 1000)
+        printf("\n\nTempo impiegato: %lu ms\n", timeTakenms);
+    else{
+        unsigned long timeTakens = timeTakenms/1000;
+        printf("\n\nTempo impiegato: %lu s\n", timeTakens);
+    }
 
     unsigned long inSize = getFileSize(fin);
     unsigned long outSize = getFileSize(fout);
