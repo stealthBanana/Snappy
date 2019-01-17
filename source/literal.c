@@ -81,7 +81,7 @@ void writeLiteral(unsigned long literalLength, FILE *fin, FILE *fout){
 
     printBytes(value, tagSize, fout);
 
-    fseek(fin, -literalLength, SEEK_CUR);
+    fseek(fin, -literalLength+2, SEEK_CUR);
     for(int i = 0; i < literalLength; i++)
         fputc(fgetc(fin), fout);
 }
