@@ -132,7 +132,7 @@ void compress(FILE *fin, FILE *fout)
         //scrivo il literal
         if((matchPos != -1 && literalLength != 0) || literalLength == pow(2, 33)){
             writeLiteral(literalLength, fin, fout);
-            //imposot la lunghezza del literal a 0
+            //imposto la lunghezza del literal a 0
             literalLength = 0;
         }
 
