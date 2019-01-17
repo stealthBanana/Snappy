@@ -16,7 +16,5 @@ typedef struct stringBuffer{
 StringBuffer *createStringBuffer(int size);
 unsigned char push(StringBuffer *strBfr);
 void put(StringBuffer *strBfr, unsigned char *c);
-unsigned char *clearStringBuffer(StringBuffer *strBfr);
-void unqueue(StringBuffer *strBfr, int n);
 
 #endif //SNAPPY_STRINGBUFFER_H

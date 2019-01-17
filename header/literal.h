@@ -11,6 +11,7 @@
 #include "utilities.h"
 
 //funzione che costruisce la codifica di un literal in base alla stringa passata come paramentro
+// e la scrive nel file di output
 void writeLiteral(unsigned long literalLength, FILE *fin, FILE *fout);
 
 #endif //SNAPPY_LITERAL_H

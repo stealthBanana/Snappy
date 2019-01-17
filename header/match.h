@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include "utilities.h"
 
-//funzione che costruisce la codifica di un match in base ai parametri
+//funzione che costruisce la codifica di un match in base ai parametri e la scrive nel file di output
 void writeMatch(unsigned char length, unsigned short offset, FILE *fout);
 
 #endif //SNAPPY_MATCH_H
