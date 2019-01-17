@@ -17,3 +17,12 @@ unsigned int intToLittleEndian(unsigned int val){
         result = result | (((val & (1 << i)) >> i) << 31-i);
     return result;
 };
+
+unsigned int getFileSize(FILE *f){
+    //posiziono il cursore alla fine
+    fseek(f, 0, SEEK_END);
+    unsigned int size = ftell(f);
+    //posiziono il cursore all'inizio
+    fseek(f, 0, SEEK_SET);
+    return size;
+}

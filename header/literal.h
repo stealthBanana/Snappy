@@ -7,15 +7,10 @@
 
 #include <malloc.h>
 #include <string.h>
-
-#include <stdio.h>
-
-typedef struct literal{
-    unsigned char *value;
-    unsigned int size:7;
-}Literal;
+#include <math.h>
+#include "utilities.h"
 
 //funzione che costruisce la codifica di un literal in base alla stringa passata come paramentro
-Literal *getLiteral(unsigned char *str);
+void writeLiteral(unsigned long literalLength, FILE *fin, FILE *fout);
 
 #endif //SNAPPY_LITERAL_H

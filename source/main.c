@@ -34,12 +34,12 @@ int main(int argc, char *argv[]) {
     }else if(argc == 2){
         //HELP
         if(strcmp(argv[1], "-h") == 0){
-            printf("Utilizzo: [opzione] [input file] [output file]\n\n"
+            printf("\nUtilizzo: [opzione] [input file] [output file]\n\n"
                    "opzioni:\n"
                    "-c\tcomprime il file di input nel file di output\n"
                    "-d\tdecomprime il file di input nel file di output\n\n"
                    "codice sorgente: https://github.com/stealthBanana/Snappy.git\n"
-                   "Autori: Manuel Grgic & Gilles Oldano\n\n");
+                   "Autori: Manuel Grgic & Gilles Oldano\n");
         }else{
             printf("Argomenti non validi, per saperne di piu inserire l'opzione \"-h\"");
         }

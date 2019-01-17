@@ -4,7 +4,7 @@
 
 #include "../header/hashTable.h"
 
-Node *createNode(char *str, int cursorPos, Node *next, Table *table){
+Node *createNode(char *str, unsigned long cursorPos, Node *next, Table *table){
     Node *node = (Node*) malloc(sizeof(Node));
     strcpy(node->str, str);
     node->cursorPos = cursorPos;
@@ -43,18 +43,19 @@ void insert(Node *node, Table *table){
     }
 };
 
-int searchAndUpdateMatch(Node *node, Table *table){
+unsigned long searchAndUpdateMatch(Node *node, Table *table){
     unsigned int key = node->hash;
     Node *dum = table->list+key;
-    while(dum->str[0] != 0) {
+    //while(dum->str[0] != 0) {
+    while(dum != NULL) {
         if (memcmp(dum->str, node->str, 4) == 0) {
-            int result = dum->cursorPos;
+            unsigned long result = dum->cursorPos;
             dum->cursorPos = node->cursorPos;
             return result;
         }
         dum = dum->next;
     }
-    return -1;
+    return (unsigned long)-1;
 };
 
 void clearTable(Table *table){

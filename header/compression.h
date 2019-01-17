@@ -10,13 +10,14 @@
 #include <string.h>
 #include <math.h>
 #include <malloc.h>
+#include <time.h>
 #include "literal.h"
 #include "match.h"
 #include "hashTable.h"
 #include "stringBuffer.h"
 #include "utilities.h"
 
-unsigned char *getSize(FILE *fin);
+unsigned char *getSize(int size);
 void compress(FILE *fin, FILE *fout);
 
 #endif //SNAPPY_COMPRESSION_H

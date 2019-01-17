@@ -7,13 +7,10 @@
 
 #include <malloc.h>
 #include <string.h>
-
-typedef struct match{
-    unsigned char *value;
-    unsigned short size:2;
-}Match;
+#include <stdio.h>
+#include "utilities.h"
 
 //funzione che costruisce la codifica di un match in base ai parametri
-Match *getMatch(unsigned char length, unsigned short offset);
+void writeMatch(unsigned char length, unsigned short offset, FILE *fout);
 
 #endif //SNAPPY_MATCH_H

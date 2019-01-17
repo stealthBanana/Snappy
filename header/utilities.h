@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 void printBytes(unsigned char *bytes, int size, FILE *fout);
-
 unsigned int intToLittleEndian(unsigned int val);
+unsigned int getFileSize(FILE *f);
 
 #endif //SNAPPY_UTILITIES_H
