@@ -102,7 +102,7 @@ void compress(FILE *fin, FILE *fout)
             //printf("%d\t%d\t%d\t%d\n", cursorPos, matchPos, matchLength, matchOffset);
             matchLength = 0;
             matchOffset = 0;
-            matchCountDown = 4; //4 o 3 ? boH!!
+            matchCountDown = 2; //4 o 3 o 2 ? boH!!
         }
         writeMatchFlag = 0;
 
@@ -112,7 +112,7 @@ void compress(FILE *fin, FILE *fout)
             literalLength = 0;
         }
 
-        if((cursorPos % WINDOW_SIZE) == WINDOW_SIZE-1) {
+        if(cursorPos == WINDOW_SIZE-1) {
             clearTable(table);
             cursorPos = 0;
         }
@@ -135,6 +135,4 @@ void compress(FILE *fin, FILE *fout)
     printf("\nDimensioni: iniziale = %lu Byte\tcompresso = %lu Byte\t\n"
            "Rateo di compressione: %lf\n", inSize, outSize, compressionRateo);
 
-    fclose(fin);
-    fclose(fout);
 }
