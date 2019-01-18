@@ -1,10 +1,7 @@
 //
 // Created by Gilles on 07.11.2018.
 //
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
+#include "../header/decompression.h"
 
 unsigned long dim(unsigned long d){
     unsigned long c = d;
@@ -86,7 +83,31 @@ void decompress(FILE *fin, FILE *fout) {
         tag = c & 0x3;
         switch(tag){
             case 0:
-                length = ((c & 0xFC) >> 2) + 1;
+                length = ((c & 0xFC) >> 2);
+                switch(length){
+                    case 60:
+                        length = intToLittleEndian(fgetc(fin))>>24;
+                        break;
+                    case 61:
+                        length = (intToLittleEndian(fgetc(fin)) | (intToLittleEndian(fgetc(fin)) << 8))>>16;
+                        break;
+                    case 62:
+                        length = 0;
+                        for(int i = 0; i < 3; i++){
+                            length = length | (intToLittleEndian(fgetc(fin)) << (i*8));
+                        }
+                        length = length >> 8;
+                        break;
+                    case 63:
+                        length = 0;
+                        for(int i = 0; i < 4; i++){
+                            length = length | (intToLittleEndian(fgetc(fin)) << (i*8));
+                        }
+                        break;
+                    default:
+                        length = length + 1;
+                        break;
+                }
                 int cycle = ceil((length*1.0)/4);
                 for(int i = 0; i < cycle; i++){
                     int a = 4;

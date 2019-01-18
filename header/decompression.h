@@ -5,7 +5,12 @@
 #ifndef SNAPPY_DECOMPRESSION_H
 #define SNAPPY_DECOMPRESSION_H
 
+
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+#include "utilities.h"
 
 unsigned long dim(unsigned long);
 unsigned long inv(unsigned long);

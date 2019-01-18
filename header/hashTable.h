@@ -10,7 +10,7 @@
 #include "utilities.h"
 
 typedef struct node{
-    unsigned char str[4];
+    unsigned char str[5];
     unsigned long cursorPos;
     unsigned int hash;
     struct node *next;

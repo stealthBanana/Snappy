@@ -21,7 +21,7 @@ void writeLiteral(unsigned long literalLength, FILE *fin, FILE *fout){
         value[0] = value[0] & 0;
         //setto la lunghezza del literal;
         value[0] = value[0] | (((char)length) << 2);
-    }else if(length < pow(2, 9)){
+    }else if(length < pow(2, 8)){
         tagSize = 2;
         value = (unsigned char*) calloc(sizeof(char), sizeof(char)*2);
         //setto il tag del literal (00)
@@ -32,7 +32,7 @@ void writeLiteral(unsigned long literalLength, FILE *fin, FILE *fout){
         value[0] = value[0] | (60 << 2);
         int leLength = intToLittleEndian(length);
         value[1] = value[1] | (char)(leLength >> 24);
-    }else if(length < pow(2, 17)){
+    }else if(length < pow(2, 16)){
         tagSize = 3;
         value = (unsigned char*) calloc(sizeof(char), sizeof(char)*3);
         //setto il tag del literal (00)
@@ -45,7 +45,7 @@ void writeLiteral(unsigned long literalLength, FILE *fin, FILE *fout){
         int leLength = intToLittleEndian(length);
         value[1] = value[1] | (char)(leLength >> 24);
         value[2] = value[2] | (char)((leLength >> 16) & 0x00ff);
-    }else if(length < pow(2, 25)){
+    }else if(length < pow(2, 24)){
         tagSize = 4;
         value = (unsigned char*) calloc(sizeof(char), sizeof(char)*4);
         //setto il tag del literal (00)
@@ -60,7 +60,7 @@ void writeLiteral(unsigned long literalLength, FILE *fin, FILE *fout){
         value[1] = value[1] | (char)(leLength >> 24);
         value[2] = value[2] | (char)((leLength >> 16) & 0x00ff);
         value[2] = value[2] | (char)((leLength >> 8) & 0x0000ff);
-    }else if(length < pow(2, 33)){
+    }else if(length < pow(2, 32)){
         tagSize = 5;
         value = (unsigned char*) calloc(sizeof(char), sizeof(char)*5);
         //setto il tag del literal (00)
@@ -81,7 +81,8 @@ void writeLiteral(unsigned long literalLength, FILE *fin, FILE *fout){
 
     printBytes(value, tagSize, fout);
 
-    fseek(fin, -literalLength+2, SEEK_CUR);
+    fseek(fin, -literalLength-4, SEEK_CUR);
     for(int i = 0; i < literalLength; i++)
         fputc(fgetc(fin), fout);
+    fseek(fin, 4, SEEK_CUR);
 }

@@ -5,11 +5,12 @@
 #include "../header/hashTable.h"
 
 Node *createNode(char *str, unsigned long cursorPos, Node *next, Table *table){
-    Node *node = (Node*) malloc(sizeof(Node));
+    Node *node = (Node *)malloc(sizeof(Node));
     strcpy(node->str, str);
     node->cursorPos = cursorPos;
     node->hash = hash(node->str, table->size);
     node->next = (Node*) calloc(sizeof(Node), sizeof(Node));
+    return node;
 }
 
 Table *createTable(int size){
@@ -46,9 +47,10 @@ void insert(Node *node, Table *table){
 unsigned long searchAndUpdateMatch(Node *node, Table *table){
     unsigned int key = node->hash;
     Node *dum = table->list+key;
-    //while(dum->str[0] != 0) {
     while(dum != NULL) {
-        if (memcmp(dum->str, node->str, 4) == 0) {
+        //if (memcmp(dum->str, node->str, 4) == 0) {
+        if (strcmp(dum->str, node->str) == 0) {
+            //printf("%d\t%d\t%s\t%s\n", dum->cursorPos, node->cursorPos, dum->str, node->str);
             unsigned long result = dum->cursorPos;
             dum->cursorPos = node->cursorPos;
             return result;

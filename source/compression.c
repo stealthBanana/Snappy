@@ -47,11 +47,11 @@ void compress(FILE *fin, FILE *fout)
     //buffer di 4 caratteri per la ricerca dei match
     StringBuffer *str = createStringBuffer(4);
     //hash-table
-    Table *table = createTable(HASH_TABLE_SIZE);
+    Table *hash_table = createTable(HASH_TABLE_SIZE);
     //posizione del cursore relativa alla finestra
-    unsigned long cursorPos = 0;
+    unsigned long cursorPos = -3;
     //lunghezza del literal
-    unsigned long literalLength = 3;
+    unsigned long literalLength = 0;
     //posizione del match all'interno dell'hash-table
     int matchPos = -1;
     //lunghezza del match
@@ -77,54 +77,57 @@ void compress(FILE *fin, FILE *fout)
             break;
         }
 
+        //printf("%d\t", matchCountDown);
+
+        if(matchCountDown > 0)
+            matchCountDown--;
+
         //controllo se il buffer dei caratteri è pieno
         if(strlen(str->value) == 4) {
+            //printf("%d\t%s\n", cursorPos, str->value);
+            //printf("%c", str->value[0]);
             //creo un nodo e controllo se esiste già nell'hash-table
-            Node *node = createNode(str->value, cursorPos, NULL, table);
-            matchPos = searchAndUpdateMatch(node, table);
-
+            Node *node = createNode(str->value, cursorPos, NULL, hash_table);
+            matchPos = searchAndUpdateMatch(node, hash_table);
             //no match
             if (matchPos == -1) {
                 //inserisco il nodo
-                insert(node, table);
+                insert(node, hash_table);
                 literalLength++;
                 //setto il flag per scrivere il match
                 writeMatchFlag = 1;
             }
             //match
             else if(matchCountDown == 0){
-
+            //else {
                 //primo match
-                if(matchLength == 0) {
+                if (matchLength == 0) {
                     matchLength = 4;
                     matchOffset = cursorPos - matchPos;
                 }
-
                 //prossimo match consecutivo
-                else if(matchLength > 0 && (cursorPos-matchPos-matchOffset+matchLength-4) == 0){
+                else if (matchLength > 0 && (cursorPos - matchPos - matchOffset + matchLength - 4) == 0) {
                     matchLength++;
                     matchOffset++;
                 }
-
                 //prossimo match non consecutivo
-                else{
+                else {
                     //setto il flag per scrivere il match
                     writeMatchFlag = 1;
                 }
             }
-            else
-                matchCountDown--;
-
-            //incremento il cursore
-            cursorPos++;
         }
 
         //scrivo il match
         if(writeMatchFlag && (matchLength != 0)){
+            //printf("%d\t%s\t%d\t%d\t%d\n", cursorPos, str->value, matchPos, matchLength, matchOffset);
+            //printf("%s\n", str->value);
+            //printf("%d\t%d\n", matchLength, matchOffset);
             writeMatch(matchLength, matchOffset, fout);
             matchLength = 0;
             matchOffset = 0;
-            matchCountDown = 2; //4 o 3 o 2 ? boH!!
+            matchCountDown = 3; //4 o 3 o 2 ? boH!!
+            literalLength = -matchLength;
         }
         //resetto il flag per scrivere il match
         writeMatchFlag = 0;
@@ -138,13 +141,15 @@ void compress(FILE *fin, FILE *fout)
 
         //tra una finestra e l'altra svuoto l'hash-table e resetto il cursore
         if(cursorPos == WINDOW_SIZE-1) {
-            clearTable(table);
+            clearTable(hash_table);
             cursorPos = 0;
         }
 
         //prendo il prossimo carattere
-        c[0] = fgetc(fin);
-        c[1] = 0;
+        c[0] = (char)fgetc(fin);
+        c[1] = '\0';
+        //incremento il cursore
+        cursorPos++;
     }
 
     //controllo se è rimasto ancora qualcosa da scrivere
@@ -165,7 +170,7 @@ void compress(FILE *fin, FILE *fout)
     //in secondi
     else{
         double timeTakens = (double)timeTakenms/1000;
-        printf("\n\nTempo impiegato: %lf s\n", timeTakens);
+        printf("\n\nTempo impiegato: %.3lf s\n", timeTakens);
     }
 
     unsigned long inSize = getFileSize(fin);
@@ -173,6 +178,6 @@ void compress(FILE *fin, FILE *fout)
     //calcolo il rateo di compressione
     double compressionRateo = (double)outSize/inSize;
     printf("\nDimensioni: iniziale = %lu Byte\tcompresso = %lu Byte\t\n"
-           "Rateo di compressione: %lf\n", inSize, outSize, compressionRateo);
+           "Rateo di compressione: %.2lf\n", inSize, outSize, compressionRateo);
 
 }
