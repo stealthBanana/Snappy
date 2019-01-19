@@ -17,6 +17,8 @@ unsigned long inv(unsigned long);
 void literal(unsigned long, FILE *);
 void oneMatch(unsigned int, unsigned int, FILE *);
 void twoMatch(unsigned int, unsigned int, FILE *);
+unsigned int getLength(FILE *, unsigned int);
+void printLiteral(FILE *, FILE *, unsigned long, unsigned int);
 void decompress(FILE *, FILE *);
 
 

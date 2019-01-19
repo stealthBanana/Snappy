@@ -58,6 +58,51 @@ void twoMatch(unsigned int len, unsigned int offset, FILE *fout){
     }
 }
 
+unsigned int getLength(FILE *fin, unsigned int length) {
+    switch(length){
+        case 60:
+            length = intToLittleEndian(fgetc(fin))>>24;
+            break;
+        case 61:
+            length = (intToLittleEndian(fgetc(fin)) | (intToLittleEndian(fgetc(fin)) << 8))>>16;
+            break;
+        case 62:
+            length = 0;
+            for(int i = 0; i < 3; i++){
+                length = length | (intToLittleEndian(fgetc(fin)) << (i*8));
+            }
+            length = length >> 8;
+            break;
+        case 63:
+            length = 0;
+            for(int i = 0; i < 4; i++){
+                length = length | (intToLittleEndian(fgetc(fin)) << (i*8));
+            }
+            break;
+        default:
+            length = length + 1;
+            break;
+    }
+    return length;
+}
+
+void printLiteral(FILE *fin, FILE *fout, unsigned long input, unsigned int length) {
+    int cycle = ceil((length * 1.0) / 4);
+    for(int i = 0; i < cycle; i++){
+        int a = 4;
+        if((i == (cycle-1)) && (length%4!=0)){
+            a = length%4;
+        }
+        while(a){
+            input = input << 8;
+            input = input | fgetc(fin);
+            a--;
+        }
+        literal(input, fout);
+        input = 0;
+    }
+}
+
 void decompress(FILE *fin, FILE *fout) {
     unsigned char c = fgetc(fin);
     unsigned long dimbits = 0;
@@ -84,44 +129,8 @@ void decompress(FILE *fin, FILE *fout) {
         switch(tag){
             case 0:
                 length = ((c & 0xFC) >> 2);
-                switch(length){
-                    case 60:
-                        length = intToLittleEndian(fgetc(fin))>>24;
-                        break;
-                    case 61:
-                        length = (intToLittleEndian(fgetc(fin)) | (intToLittleEndian(fgetc(fin)) << 8))>>16;
-                        break;
-                    case 62:
-                        length = 0;
-                        for(int i = 0; i < 3; i++){
-                            length = length | (intToLittleEndian(fgetc(fin)) << (i*8));
-                        }
-                        length = length >> 8;
-                        break;
-                    case 63:
-                        length = 0;
-                        for(int i = 0; i < 4; i++){
-                            length = length | (intToLittleEndian(fgetc(fin)) << (i*8));
-                        }
-                        break;
-                    default:
-                        length = length + 1;
-                        break;
-                }
-                int cycle = ceil((length*1.0)/4);
-                for(int i = 0; i < cycle; i++){
-                    int a = 4;
-                    if((i == (cycle-1)) && (length%4!=0)){
-                        a = length%4;
-                    }
-                    while(a){
-                        input = input << 8;
-                        input = input | fgetc(fin);
-                        a--;
-                    }
-                    literal(input, fout);
-                    input = 0;
-                }
+                length = getLength(fin, length);
+                printLiteral(fin, fout, input, length);
                 dimension = dimension - length;
                 break;
             case 1:
