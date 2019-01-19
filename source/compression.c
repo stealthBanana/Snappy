@@ -77,16 +77,10 @@ void compress(FILE *fin, FILE *fout)
             break;
         }
 
-        //printf("%d\t", matchCountDown);
-
-        if(matchCountDown > 0)
-            matchCountDown--;
+        printf("%d\t", literalLength);
 
         //controllo se il buffer dei caratteri è pieno
         if(strlen(str->value) == 4) {
-            //printf("%d\t%s\n", cursorPos, str->value);
-            //printf("%c", str->value[0]);
-            //creo un nodo e controllo se esiste già nell'hash-table
             Node *node = createNode(str->value, cursorPos, NULL, hash_table);
             matchPos = searchAndUpdateMatch(node, hash_table);
             //no match
@@ -118,11 +112,11 @@ void compress(FILE *fin, FILE *fout)
             }
         }
 
+        if(matchCountDown > 0)
+            matchCountDown--;
+
         //scrivo il match
         if(writeMatchFlag && (matchLength != 0)){
-            //printf("%d\t%s\t%d\t%d\t%d\n", cursorPos, str->value, matchPos, matchLength, matchOffset);
-            //printf("%s\n", str->value);
-            //printf("%d\t%d\n", matchLength, matchOffset);
             writeMatch(matchLength, matchOffset, fout);
             matchLength = 0;
             matchOffset = 0;
