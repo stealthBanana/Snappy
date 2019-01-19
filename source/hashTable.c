@@ -47,10 +47,8 @@ void insert(Node *node, Table *table){
 unsigned long searchAndUpdateMatch(Node *node, Table *table){
     unsigned int key = node->hash;
     Node *dum = table->list+key;
-    while(dum != NULL) {
-        //if (memcmp(dum->str, node->str, 4) == 0) {
+    while(dum->str[0] != 0) {
         if (strcmp(dum->str, node->str) == 0) {
-            //printf("%d\t%d\t%s\t%s\n", dum->cursorPos, node->cursorPos, dum->str, node->str);
             unsigned long result = dum->cursorPos;
             dum->cursorPos = node->cursorPos;
             return result;
@@ -61,6 +59,10 @@ unsigned long searchAndUpdateMatch(Node *node, Table *table){
 };
 
 void clearTable(Table *table){
-    Table *emptyTable = createTable(table->size);
-    table = emptyTable;
+    for(int k = 0; k < table->size; k++) {
+        if(table->list[k].str[0] != 0) {
+            table->list[k].str[0] = 0;
+            free(table->list[k].next);
+        }
+    }
 };
