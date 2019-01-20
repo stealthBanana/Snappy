@@ -79,8 +79,6 @@ void compress(FILE *fin, FILE *fout)
             break;
         }
 
-        //printf("Literal:\t%d\t%d\n", literalStart, literalStop);
-
         //controllo se il buffer dei caratteri è pieno
         if(strlen(str->value) == 4) {
             Node *node = createNode(str->value, cursorPos, NULL, hash_table);
@@ -121,12 +119,11 @@ void compress(FILE *fin, FILE *fout)
 
         //scrivo il match
         if(writeMatchFlag && (matchLength != 0)){
-            //printf("Match:\t%d\t%d\n", matchOffset, matchLength);
             writeMatch(matchLength, matchOffset, fout);
             literalStart = literalStop+matchLength;
             matchLength = 0;
             matchOffset = 0;
-            matchCountDown = 3; //4 o 3 o 2 ? boH!!
+            matchCountDown = 3;
         }
         //resetto il flag per scrivere il match
         writeMatchFlag = 0;
