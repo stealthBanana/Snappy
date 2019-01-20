@@ -14,9 +14,11 @@
 
 unsigned long dim(unsigned long);
 unsigned long inv(unsigned long);
-void literal(unsigned long, FILE *);
-void oneMatch(unsigned int, unsigned int, FILE *);
-void twoMatch(unsigned int, unsigned int, FILE *);
+void literal(FILE *, FILE *, unsigned long, unsigned int);
+void printLiteral(unsigned long, FILE *);
+unsigned int oneMatch(char, FILE *, FILE *);
+unsigned int twoMatch(char, FILE *, FILE *);
+unsigned int getLength(FILE *, unsigned int);
 void decompress(FILE *, FILE *);
 
 

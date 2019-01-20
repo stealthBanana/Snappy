@@ -26,6 +26,7 @@ void writeLiteral(unsigned long literalLength, FILE *fin, FILE *fout){
 
     //lunghezza del literal < 2 elevato 8
     }else if(length < pow(2, 8)){
+        length++;
         tagSize = 2;
         value = (unsigned char*) calloc(sizeof(char), sizeof(char)*2);
         //setto il tag del literal (00)
@@ -40,6 +41,7 @@ void writeLiteral(unsigned long literalLength, FILE *fin, FILE *fout){
 
     //lunghezza del literal < 2 elevato 16
     }else if(length < pow(2, 16)){
+        length++;
         tagSize = 3;
         value = (unsigned char*) calloc(sizeof(char), sizeof(char)*3);
         //setto il tag del literal (00)
@@ -56,6 +58,7 @@ void writeLiteral(unsigned long literalLength, FILE *fin, FILE *fout){
 
     //lunghezza del literal < 2 elevato 24
     }else if(length < pow(2, 24)){
+        length++;
         tagSize = 4;
         value = (unsigned char*) calloc(sizeof(char), sizeof(char)*4);
         //setto il tag del literal (00)

@@ -53,6 +53,7 @@ void compress(FILE *fin, FILE *fout)
     //lunghezza del literal
     unsigned long literalStart = 0;
     unsigned long literalStop = 0;
+    unsigned long tmp = 0;
     //posizione del match all'interno dell'hash-table
     int matchPos = -1;
     //lunghezza del match
@@ -78,8 +79,6 @@ void compress(FILE *fin, FILE *fout)
             break;
         }
 
-        printf("Literal:\t%d\t%d\n", literalStart, literalStop);
-
         //controllo se il buffer dei caratteri è pieno
         if(strlen(str->value) == 4) {
             Node *node = createNode(str->value, cursorPos, NULL, hash_table);
@@ -93,21 +92,23 @@ void compress(FILE *fin, FILE *fout)
             }
             //match
             else if(matchCountDown == 0){
-            //else {
+
                 //primo match
                 if (matchLength == 0) {
                     matchLength = 4;
                     matchOffset = cursorPos - matchPos;
+                    tmp = matchOffset;
+                    literalStop = cursorPos;
                 }
                 //prossimo match consecutivo
-                else if (matchLength > 0 && (cursorPos - matchPos - matchOffset + matchLength - 4) == 0) {
+                else if (matchLength > 0 && (cursorPos - matchPos - tmp + matchLength - 4) == 0) {
                     matchLength++;
-                    matchOffset++;
+                    tmp++;
+                    literalStart = literalStop;
                 }
                 //prossimo match non consecutivo
                 else {
                     //setto il flag per scrivere il match
-                    literalStop = cursorPos-matchLength+3; //DEVE CAMBIARE QUNDO SCRIVO UN MATCH
                     writeMatchFlag = 1;
                 }
             }
@@ -118,10 +119,8 @@ void compress(FILE *fin, FILE *fout)
 
         //scrivo il match
         if(writeMatchFlag && (matchLength != 0)){
-            printf("Match:\t%d\t%d\n", matchOffset, matchLength);
             writeMatch(matchLength, matchOffset, fout);
             literalStart = literalStop+matchLength;
-            literalStop = literalStart;
             matchLength = 0;
             matchOffset = 0;
             matchCountDown = 3; //4 o 3 o 2 ? boH!!
