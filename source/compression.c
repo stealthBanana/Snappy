@@ -51,7 +51,9 @@ void compress(FILE *fin, FILE *fout)
     //posizione del cursore relativa alla finestra
     unsigned long cursorPos = -3;
     //lunghezza del literal
-    unsigned long literalLength = 0;
+    unsigned long literalStart = 0;
+    unsigned long literalStop = 0;
+    unsigned long literalStoptmp = 0;
     //posizione del match all'interno dell'hash-table
     int matchPos = -1;
     //lunghezza del match
@@ -77,7 +79,7 @@ void compress(FILE *fin, FILE *fout)
             break;
         }
 
-        printf("%d\t", literalLength);
+        printf("Literal:\t%d\t%d\n", literalStart, literalStop);
 
         //controllo se il buffer dei caratteri è pieno
         if(strlen(str->value) == 4) {
@@ -87,7 +89,6 @@ void compress(FILE *fin, FILE *fout)
             if (matchPos == -1) {
                 //inserisco il nodo
                 insert(node, hash_table);
-                literalLength++;
                 //setto il flag per scrivere il match
                 writeMatchFlag = 1;
             }
@@ -107,6 +108,7 @@ void compress(FILE *fin, FILE *fout)
                 //prossimo match non consecutivo
                 else {
                     //setto il flag per scrivere il match
+                    literalStop = cursorPos-matchLength+3; //DEVE CAMBIARE QUNDO SCRIVO UN MATCH
                     writeMatchFlag = 1;
                 }
             }
@@ -117,24 +119,25 @@ void compress(FILE *fin, FILE *fout)
 
         //scrivo il match
         if(writeMatchFlag && (matchLength != 0)){
+            printf("Match:\t%d\t%d\n", matchOffset, matchLength);
             writeMatch(matchLength, matchOffset, fout);
+            literalStart = literalStop+matchLength;
+            literalStop = literalStart;
             matchLength = 0;
             matchOffset = 0;
             matchCountDown = 3; //4 o 3 o 2 ? boH!!
-            literalLength = -matchLength;
         }
         //resetto il flag per scrivere il match
         writeMatchFlag = 0;
 
         //scrivo il literal
-        if((matchPos != -1 && literalLength != 0) || literalLength == pow(2, 33)){
-            writeLiteral(literalLength, fin, fout);
-            //imposto la lunghezza del literal a 0
-            literalLength = 0;
+        if(((matchPos != -1 && ((long)(literalStop-literalStart)) > 0)) || ((literalStop-literalStart) == pow(2, 32))){
+            writeLiteral((literalStop-literalStart), fin, fout);
         }
 
         //tra una finestra e l'altra svuoto l'hash-table e resetto il cursore
         if(cursorPos == WINDOW_SIZE-1) {
+            printf("HASH-TABLE CLEARED");
             clearTable(hash_table);
             cursorPos = 0;
         }
@@ -147,9 +150,9 @@ void compress(FILE *fin, FILE *fout)
     }
 
     //controllo se è rimasto ancora qualcosa da scrivere
-    if(literalLength != 0) {
+    if(((long)(literalStop-literalStart)) > 0) {
         //scrivo gli ultimi caratteri
-        writeLiteral(literalLength, fin, fout);
+        writeLiteral((literalStop-literalStart), fin, fout);
     }
 
     //leggo il tempo di fine
