@@ -6,7 +6,7 @@
 #define HASH_TABLE_SIZE 32768
 #define WINDOW_SIZE 65536
 
-//funzione che prende la dimensione del file da comprimere come parametro e la restituisce in varint
+//funzione che legge la dimensione del file da comprimere e la restituisce in varint
 unsigned char *getSize(int size){
     if(size != 0) {
         //calcolo quanti bit servono per scrivere il numero della dimensione del file
@@ -79,6 +79,8 @@ void compress(FILE *fin, FILE *fout)
             break;
         }
 
+        //printf("Literal:\t%d\t%d\n", literalStart, literalStop);
+
         //controllo se il buffer dei caratteri è pieno
         if(strlen(str->value) == 4) {
             Node *node = createNode(str->value, cursorPos, NULL, hash_table);
@@ -92,7 +94,7 @@ void compress(FILE *fin, FILE *fout)
             }
             //match
             else if(matchCountDown == 0){
-
+            //else {
                 //primo match
                 if (matchLength == 0) {
                     matchLength = 4;
@@ -119,6 +121,7 @@ void compress(FILE *fin, FILE *fout)
 
         //scrivo il match
         if(writeMatchFlag && (matchLength != 0)){
+            //printf("Match:\t%d\t%d\n", matchOffset, matchLength);
             writeMatch(matchLength, matchOffset, fout);
             literalStart = literalStop+matchLength;
             matchLength = 0;
