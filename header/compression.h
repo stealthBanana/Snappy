@@ -17,7 +17,9 @@
 #include "stringBuffer.h"
 #include "utilities.h"
 
+//funzione che prende la dimensione del file da comprimere come parametro e la restituisce in varint
 unsigned char *getSize(int size);
+//funzione che comprime il file di input nel file di output
 void compress(FILE *fin, FILE *fout);
 
 #endif //SNAPPY_COMPRESSION_H

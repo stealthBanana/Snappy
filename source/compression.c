@@ -6,7 +6,7 @@
 #define HASH_TABLE_SIZE 32768
 #define WINDOW_SIZE 65536
 
-//funzione che legge la dimensione del file da comprimere e la restituisce in varint
+//funzione che prende la dimensione del file da comprimere come parametro e la restituisce in varint
 unsigned char *getSize(int size){
     if(size != 0) {
         //calcolo quanti bit servono per scrivere il numero della dimensione del file
@@ -53,7 +53,6 @@ void compress(FILE *fin, FILE *fout)
     //lunghezza del literal
     unsigned long literalStart = 0;
     unsigned long literalStop = 0;
-    unsigned long literalStoptmp = 0;
     //posizione del match all'interno dell'hash-table
     int matchPos = -1;
     //lunghezza del match

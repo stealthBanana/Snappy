@@ -8,8 +8,11 @@
 #include <malloc.h>
 #include <string.h>
 
+//struttura del buffer di caratteri
 typedef struct stringBuffer{
+    //caratteri nel buffer
     unsigned char *value;
+    //dimensione massima del buffer
     int size;
 }StringBuffer;
 

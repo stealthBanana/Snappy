@@ -9,13 +9,18 @@
 #include <string.h>
 #include "utilities.h"
 
+//struttura dei nodi contenuti nell'hash-table
 typedef struct node{
+    //combinazione di 4 caratteri
     unsigned char str[5];
+    //posizione del cursore in cui si trova la combinazione
     unsigned long cursorPos;
+    //hash della combinazione
     unsigned int hash;
     struct node *next;
 }Node;
 
+//struttura dell'hash-table
 typedef struct table{
     int size;
     Node *list;
