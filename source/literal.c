@@ -22,6 +22,7 @@ void writeLiteral(unsigned long literalLength, FILE *fin, FILE *fout){
         //setto la lunghezza del literal;
         value[0] = value[0] | (((char)length) << 2);
     }else if(length < pow(2, 8)){
+        length++;
         tagSize = 2;
         value = (unsigned char*) calloc(sizeof(char), sizeof(char)*2);
         //setto il tag del literal (00)
@@ -33,6 +34,7 @@ void writeLiteral(unsigned long literalLength, FILE *fin, FILE *fout){
         int leLength = intToLittleEndian(length);
         value[1] = value[1] | (char)(leLength >> 24);
     }else if(length < pow(2, 16)){
+        length++;
         tagSize = 3;
         value = (unsigned char*) calloc(sizeof(char), sizeof(char)*3);
         //setto il tag del literal (00)
@@ -46,6 +48,7 @@ void writeLiteral(unsigned long literalLength, FILE *fin, FILE *fout){
         value[1] = value[1] | (char)(leLength >> 24);
         value[2] = value[2] | (char)((leLength >> 16) & 0x00ff);
     }else if(length < pow(2, 24)){
+        length++;
         tagSize = 4;
         value = (unsigned char*) calloc(sizeof(char), sizeof(char)*4);
         //setto il tag del literal (00)

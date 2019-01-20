@@ -57,7 +57,7 @@ void literal(FILE *fin, FILE *fout, unsigned long input, unsigned int length) {
 
 unsigned int oneMatch(char input, FILE *fin, FILE *fout){
     char c = input;
-    unsigned long length = (c & 0x1c) + 4;
+    unsigned long length = ((c & 0x1c) >> 2) + 4;
     unsigned long len = length;
     unsigned long offset = ((c & 0xE0) << 3) | fgetc(fin);
     for(int i = 0; i < len; i++){
@@ -71,7 +71,7 @@ unsigned int oneMatch(char input, FILE *fin, FILE *fout){
 
 unsigned int twoMatch(char input, FILE *fin, FILE *fout){
     char c = input;
-    unsigned long length = (c & 0xFC) + 1;
+    unsigned long length = ((c & 0xFC) >> 2)+1;
     unsigned long len = length;
     unsigned long offset = fgetc(fin);
     offset = offset << 8;
